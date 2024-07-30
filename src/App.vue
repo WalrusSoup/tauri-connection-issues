@@ -1,6 +1,8 @@
 <script setup lang="ts">
   const startReallyLongRequest = () => {
-    fetch('http://127.0.0.1:8888/uwu')
+    fetch('http://127.0.0.1:8888/uwu', {
+      connectTimeout: 280000
+    } as RequestInit)
       .then(response => response.text())
       .then(json => {
         // this won't happen

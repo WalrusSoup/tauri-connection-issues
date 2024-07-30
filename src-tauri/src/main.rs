@@ -1,6 +1,5 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 fn main() {
@@ -15,7 +14,7 @@ fn main() {
 
 #[actix_web::main]
 async fn server() -> std::io::Result<()> {
-    println!("Server running at http://127.0.0.1");
+    println!("Server running at http://127.0.0.1:8888");
     HttpServer::new(|| {
         App::new()
             .route("/uwu", web::get().to(manual_hello))

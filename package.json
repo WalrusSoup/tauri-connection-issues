@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@pubnub/chat": "^0.8.1",
     "vue": "^3.4.31"
   },
   "devDependencies": {

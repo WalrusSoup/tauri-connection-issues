@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { Chat } from '@pubnub/chat';
   const startReallyLongRequest = () => {
     fetch('http://127.0.0.1:8888/uwu', {
       connectTimeout: 280000
@@ -13,6 +14,47 @@
         console.error(err);
       })
   }
+
+
+  Chat.init({
+        publishKey: import.meta.env.VITE_PUBNUB_PUB_KEY,
+        subscribeKey: import.meta.env.VITE_PUBNUB_SUB_KEY,
+        userId: "3817",
+        storeUserActivityTimestamps: true,
+        restore: true,
+        // these have to be here, though, im not *WHAT* they are fixing. Restore does not work unless these are present?
+        // rather, when these are present, it seems like it will throw a timeout but *not* throw a PNBadRequestCategory error
+        // NO IDEA WHY!
+        // presenceTimeout: 50,
+        // subscribeRequestTimeout: 50,
+
+      }).then((chat) => {
+        chat.sdk.addListener({
+          status: (statusEvent) => {
+            console.log('[chat] Status', statusEvent);
+            if (statusEvent.category === 'PNBadRequestCategory') {
+              console.error('Bad category detected');
+            } else if (statusEvent.operation === 'PNUnsubscribeOperation') {
+              console.error('UNSUBSCRIBED FROM KNOWN CHANNEL, WAS THIS AN ERROR?', statusEvent.affectedChannels);
+            }
+          },
+        });
+        chat = chat;
+        // console.log('[chat] joining channels');
+        chat?.currentUser
+          .getMemberships()
+          .then(({ memberships }) => {
+            memberships.forEach((membership) => {
+              console.log('[chat] joining channel', membership.channel.id);
+              
+              membership.channel.join((msg) => {
+                console.log(msg);
+              }).then(() => {
+                console.log('CONNECTED');
+              });
+            });
+          });
+        })
 </script>
 
 <template>
